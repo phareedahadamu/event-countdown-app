@@ -12,7 +12,7 @@ import {
 import { Field, FieldGroup, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction, useTransition } from "react";
 import { DatePickerTime } from "./DatePicker";
 import { Textarea } from "../ui/textarea";
 import { useGetCachedDate } from "@/lib/hooks/getCurrentDate";
@@ -23,13 +23,17 @@ import { toast } from "sonner";
 export default function EditEvent({
   event,
   setEvents,
+  date,
+  setDate,
 }: {
   event: EventType;
   setEvents: Dispatch<SetStateAction<EventType[] | null>>;
+  date: Date | undefined;
+  setDate: Dispatch<SetStateAction<Date | undefined>>;
 }) {
   // States
+  const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(new Date(event.dueDate));
   const [titleError, setTitleError] = useState<string | null>(null);
   const [descriptionError, setDescriptionError] = useState<string | null>(null);
   const [dateError, setDateError] = useState<string | null>(null);
@@ -86,26 +90,28 @@ export default function EditEvent({
     if (!isValid) return;
     if (typeof window === "undefined") return;
     if (!date) return;
-    const combinedDate = combineDateAndTime(date, time);
-    const payload = {
-      ...event,
-      title,
-      dueDate: combinedDate,
-      date: cachedDate,
-      description: description,
-    };
-    setEvents((prev) => {
-      if (!prev) return null;
-      const updated = prev.map((e) => {
-        if (payload.id === e.id) return payload;
-        else return e;
+    startTransition(() => {
+      const combinedDate = combineDateAndTime(date, time);
+      const payload = {
+        ...event,
+        title,
+        dueDate: combinedDate,
+        date: cachedDate,
+        description: description,
+      };
+      setEvents((prev) => {
+        if (!prev) return null;
+        const updated = prev.map((e) => {
+          if (payload.id === e.id) return payload;
+          else return e;
+        });
+
+        return updated;
       });
 
-      return updated;
+      setIsOpen(false);
+      toast("Event has been updated");
     });
-
-    setIsOpen(false);
-    toast("Event has been updated");
   }
 
   return (
@@ -185,9 +191,13 @@ export default function EditEvent({
           </FieldGroup>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" disabled={isPending}>
+                Cancel
+              </Button>
             </DialogClose>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit" disabled={isPending}>
+              Save changes
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

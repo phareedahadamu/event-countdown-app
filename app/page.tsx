@@ -1,12 +1,13 @@
 "use client";
 import EventTabs from "@/components/web/EventTabs";
 import AddEvent from "@/components/web/AddEvent";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useGetEvents } from "@/lib/hooks/getEvents";
 
 export default function Home() {
   const [events, setEvents] = useGetEvents();
+  const [date, setDate] = useState<Date | undefined>(undefined);
   useEffect(() => {
     if (events) {
       localStorage.setItem("events", JSON.stringify(events));
@@ -21,7 +22,7 @@ export default function Home() {
             Keep track of birthdays, deadlines, and launches in one place.
           </p>
         </div>
-        <AddEvent setEvents={setEvents} />
+        <AddEvent setEvents={setEvents} date={date} setDate={setDate} />
       </div>
       <EventTabs events={events} setEvents={setEvents} />
     </div>

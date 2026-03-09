@@ -13,7 +13,7 @@ import { Field, FieldGroup, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
-import { useState, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction, useTransition } from "react";
 import { DatePickerTime } from "./DatePicker";
 import { Textarea } from "../ui/textarea";
 import { useGetCachedDate } from "@/lib/hooks/getCurrentDate";
@@ -23,12 +23,17 @@ import { toast } from "sonner";
 
 export default function AddEvent({
   setEvents,
+  date,
+  setDate,
 }: {
   setEvents: Dispatch<SetStateAction<EventType[] | null>>;
+  date: Date | undefined;
+  setDate: Dispatch<SetStateAction<Date | undefined>>;
 }) {
   // States
+  const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
+
   const [titleError, setTitleError] = useState<string | null>(null);
   const [descriptionError, setDescriptionError] = useState<string | null>(null);
   const [dateError, setDateError] = useState<string | null>(null);
@@ -85,22 +90,25 @@ export default function AddEvent({
     if (!isValid) return;
     if (typeof window === "undefined") return;
     if (!date) return;
-    const combinedDate = combineDateAndTime(date, time);
-    const payload = {
-      id: crypto.randomUUID(),
-      title,
-      dueDate: combinedDate,
-      date: cachedDate,
-      description: description,
-    };
-    setEvents((prev) => {
-      const updated = prev ? [payload, ...prev] : [payload];
+    startTransition(() => {
+      const combinedDate = combineDateAndTime(date, time);
+      const payload = {
+        id: crypto.randomUUID(),
+        title,
+        dueDate: combinedDate,
+        date: cachedDate,
+        description: description,
+      };
+      setEvents((prev) => {
+        const updated = prev ? [payload, ...prev] : [payload];
 
-      return updated;
+        return updated;
+      });
+
+      setIsOpen(false);
+      toast("New event has been created");
+      setDate(undefined);
     });
-
-    setIsOpen(false);
-    toast("New event has been created");
   }
 
   return (
@@ -177,9 +185,13 @@ export default function AddEvent({
           </FieldGroup>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" disabled={isPending}>
+                Cancel
+              </Button>
             </DialogClose>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit" disabled={isPending}>
+              Save changes
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

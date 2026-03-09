@@ -1,6 +1,6 @@
 "use client";
 import { EventType } from "@/lib/types";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
   Card,
   CardContent,
@@ -25,6 +25,7 @@ export default function EventCard({
   e: EventType;
   setEvents: Dispatch<SetStateAction<EventType[] | null>>;
 }) {
+  const [date, setDate] = useState<Date | undefined>(new Date(e.dueDate));
   const { days, hours, minutes, seconds } = useGetTimeRemaining(e.dueDate);
   const isPast = days === 0 && hours === 0 && minutes === 0 && seconds === 0;
   const urgency = getUrgency({ days, hours, minutes, seconds }) as Urgency;
@@ -73,7 +74,7 @@ export default function EventCard({
         </CardDescription>
       </CardHeader>
       <CardFooter className="w-full px-0 gap-4">
-        <EditEvent event={e} setEvents={setEvents} />
+        <EditEvent event={e} setEvents={setEvents} date={date} setDate={setDate}/>
         <DeleteEvent setEvents={setEvents} id={e.id} />
       </CardFooter>
     </Card>
