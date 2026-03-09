@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Countdown Timer App ⏳
 
-## Getting Started
+A responsive countdown timer application that allows users to create and manage multiple event countdowns. Each event displays the remaining time in a clear, visual format and highlights urgency as deadlines approach.
 
-First, run the development server:
+Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Create new countdown timers with:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Event name
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Date and time
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Optional description
 
-## Learn More
+View multiple countdowns simultaneously
 
-To learn more about Next.js, take a look at the following resources:
+Display time remaining in days, hours, minutes, and seconds
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Visual urgency indicators to distinguish between events that are far away and those approaching soon
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Edit existing countdowns
 
-## Deploy on Vercel
+Delete countdowns
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Persistent storage using localStorage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Fully responsive design for mobile and desktop
+
+Tech Stack
+
+Framework: Next.js
+
+Language: TypeScript
+
+Styling: Tailwind CSS
+
+UI Components: shadcn/ui
+
+How It Works
+
+Users create a countdown by entering an event name and selecting a date and time.
+
+The app calculates the remaining time between the current date and the event date.
+
+Each countdown updates dynamically to show the time left.
+
+Visual cues indicate urgency as the event approaches.
+
+All countdowns are stored in localStorage, ensuring data persists between sessions.
