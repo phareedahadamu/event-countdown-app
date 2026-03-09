@@ -22,7 +22,7 @@ export default function EventTabs({
           All
         </TabsTrigger>
       </TabsList>
-      <div className="border-[0.89px] border-muted-foreground/30 rounded-[12px] lg:p-6 p-4 flex bg-accent/10">
+      <div className="md:border-[0.89px] md:border-muted-foreground/30 rounded-[12px] lg:p-6 md:p-4 p-0 flex bg-accent/10">
         <TabsContent value="all">
           <EventCards activeTab="all" events={events} setEvents={setEvents} />
         </TabsContent>
